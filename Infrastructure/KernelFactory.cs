@@ -1,0 +1,43 @@
+﻿using SemanticKernel_AgenticAI.Plugins;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.SemanticKernel;
+using SemanticKernel_AgenticAI.Core.Models;
+
+namespace SemanticKernel_AgenticAI.Infrastructure
+{
+    public static class KernelFactory
+    {
+        public static Kernel CreateKernel(OpenAISettings settings)
+        {
+            var builder = Kernel.CreateBuilder();
+
+            // ✅ Register dependencies INSIDE kernel DI
+            builder.Services.AddLogging(config =>
+            {
+                config.AddConsole();
+                config.SetMinimumLevel(LogLevel.Trace);
+            });
+
+            builder.Services.AddSingleton<WeatherPlugin>();
+            builder.Services.AddSingleton<ComparisonPlugin>();
+
+            builder.AddOpenAIChatCompletion(
+                modelId: settings.Model,
+                apiKey: settings.ApiKey
+            );
+
+            var kernel = builder.Build();
+
+            kernel.Plugins.AddFromType<WeatherPlugin>();
+            kernel.Plugins.AddFromType<ComparisonPlugin>();
+
+            return kernel;
+        }
+    }
+}
