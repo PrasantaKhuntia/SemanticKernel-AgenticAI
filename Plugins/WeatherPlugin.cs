@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
@@ -15,6 +16,7 @@ namespace SemanticKernel_AgenticAI.Plugins
         private readonly string _apiKey = "";
 
         [KernelFunction]
+        [Description("Get current weather including temperature in Celsius and condition")]
         public async Task<WeatherResult?> GetWeather(string city)
         {
             try

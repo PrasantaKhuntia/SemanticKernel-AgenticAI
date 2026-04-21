@@ -19,13 +19,10 @@ namespace SemanticKernel_AgenticAI.Infrastructure
 
             // ✅ Register dependencies INSIDE kernel DI
             builder.Services.AddLogging(config =>
-            {
-                config.AddConsole();
-                config.SetMinimumLevel(LogLevel.Trace);
-            });
-
-            builder.Services.AddSingleton<WeatherPlugin>();
-            builder.Services.AddSingleton<ComparisonPlugin>();
+{
+    config.AddConsole();
+    config.SetMinimumLevel(LogLevel.Information);
+});
 
             builder.AddOpenAIChatCompletion(
                 modelId: settings.Model,
@@ -33,9 +30,6 @@ namespace SemanticKernel_AgenticAI.Infrastructure
             );
 
             var kernel = builder.Build();
-
-            kernel.Plugins.AddFromType<WeatherPlugin>();
-            kernel.Plugins.AddFromType<ComparisonPlugin>();
 
             return kernel;
         }

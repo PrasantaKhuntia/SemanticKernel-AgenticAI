@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace SemanticKernel_AgenticAI.Plugins
     public class ComparisonPlugin
     {
         [KernelFunction]
+        [Description("Compare temperatures of two cities and determine which is hotter")]
         public string CompareWeather(
             double temp1,
             double temp2,

@@ -1,31 +1,22 @@
 ﻿using SemanticKernel_AgenticAI.Core.Interfaces;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using SemanticKernel_AgenticAI.Core.Planner;
 
 namespace SemanticKernel_AgenticAI.Core.Services
 {
     public class AgentService : IAgentService
     {
-        private readonly Kernel _kernel;
+        private readonly AgentPlanner _planner;
 
-        public AgentService(Kernel kernel)
+        public AgentService(AgentPlanner planner)
         {
-            _kernel = kernel;
+            _planner = planner;
         }
 
         public async Task<string> AskAsync(string input)
         {
-            var executionSettings = new OpenAIPromptExecutionSettings
-            {
-                ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
-            };
-
-            var result = await _kernel.InvokePromptAsync(
-                $"User Query: {input}",
-                new KernelArguments(executionSettings)
-            );
-
-            return result.ToString();
+            return await _planner.ExecuteAsync(input);
         }
     }
 }

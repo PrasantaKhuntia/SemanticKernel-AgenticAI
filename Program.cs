@@ -4,6 +4,9 @@ using SemanticKernel_AgenticAI.Core.Services;
 using SemanticKernel_AgenticAI.Infrastructure;
 using SemanticKernel_AgenticAI.Plugins;
 using Microsoft.Extensions.Configuration;
+using Microsoft.SemanticKernel;
+using SemanticKernel_AgenticAI.Core.Planner;
+using SemanticKernel_AgenticAI.Core.Memory;
 
 class Program
 {
@@ -16,18 +19,20 @@ class Program
 
         var settings = config.GetSection("OpenAI").Get<OpenAISettings>();
 
-        // Create Kernel
         var kernel = KernelFactory.CreateKernel(settings);
 
-        // Create dependencies manually
-        var httpClient = new HttpClient();
+        // Register plugins
+        kernel.Plugins.AddFromObject(new WeatherPlugin());
+        kernel.Plugins.AddFromObject(new ComparisonPlugin());
 
-        var weatherPlugin = new WeatherPlugin();
-        var comparisonPlugin = new ComparisonPlugin();
+        // Create Memory
+        var chatContextBuilder = new ChatContextBuilder();
 
-        var orchestrator = new AgentOrchestrator(weatherPlugin, comparisonPlugin);
+        // Create planner
+        var planner = new AgentPlanner(kernel, chatContextBuilder);
 
-        IAgentService agent = new AgentService(kernel);
+        // Create agent
+        IAgentService agent = new AgentService(planner);
 
         Console.WriteLine("Agent is ready. Type 'exit' to quit.");
 
